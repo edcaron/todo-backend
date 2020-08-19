@@ -1,18 +1,18 @@
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const todosRouter = require('./routes/todos')
+import express, { json } from 'express';
+import cors from 'cors';
+import { connect, connection as _connection } from 'mongoose';
+import todosRouter from './routes/todos';
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 5000;
 app.use(cors());
-app.use(express.json());
+app.use(json());
 
 const uri = process.env.ATLAS_URI;
-mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
+connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
 
-const connection = mongoose.connection;
+const connection = _connection;
 connection.once('open', () => {
   console.log("MongoDB database connection established successfully");
 })

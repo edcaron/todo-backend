@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+import { Schema as _Schema, model } from 'mongoose'
 
-const Schema = mongoose.Schema
+const Schema = _Schema
 
 const todoSchema = new Schema({
   task: { type: String, required: true },
@@ -9,6 +9,6 @@ const todoSchema = new Schema({
   timestamps: true,
 })
 
-const Todo = mongoose.model('Todo', todoSchema)
+const Todo = model('Todo', todoSchema)
 
-module.exports = Todo
+export default Todo

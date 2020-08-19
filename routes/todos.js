@@ -1,5 +1,5 @@
 const router = require('express').Router()
-let Todo = require('../models/todo.model')
+import Todo from '../models/todo.model'
 
 router.route('/:pageNumber?').get( async (req, res) => {
   try {
@@ -7,13 +7,14 @@ router.route('/:pageNumber?').get( async (req, res) => {
     const page = (req.params.pageNumber) || 1
     const skip = limit * (page - 1)
 
-    data = await Todo.find()
+    const data = await Todo.find()
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .catch(err => res.status(400).json('Error: ' + err))
     
-    count = await Todo.count()
+    
+    const count = await Todo.count()
       .sort({ createdAt: -1 })
       .skip(skip + limit)
       .limit(limit)
@@ -34,7 +35,7 @@ router.route('/add').post(async (req, res) => {
     const task = req.body.task
     const completed = req.body.completed
 
-    const newTodo = new Todo({
+    let newTodo = new Todo({
       task,
       completed
     })
@@ -58,7 +59,7 @@ router.route('/:id').delete(async (req, res) => {
 
 router.route('/update/:id').post(async (req, res) => {
   try{
-      todo = await Todo.findById(req.body._id)
+      let todo = await Todo.findById(req.body._id)
 
       todo.task = req.body.task
       todo.completed = req.body.completed
@@ -72,4 +73,4 @@ router.route('/update/:id').post(async (req, res) => {
   }
 })
 
-module.exports = router
+export default router
