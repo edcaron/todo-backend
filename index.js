@@ -2,7 +2,9 @@ import express, { json } from 'express'
 import cors from 'cors'
 import { connect, connection as _connection } from 'mongoose'
 import todosRouter from './routes/todos'
-require('dotenv').config()
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const app = express()
 const port = process.env.PORT || 5000

@@ -1,9 +1,11 @@
-const router = require('express').Router()
+import express from 'express'
 import Todo from '../models/todo.model'
+
+const router = express.Router();
 
 router.route('/:pageNumber?').get( async (req, res) => {
   try {
-    const limit = 20		
+    const limit = 10	
     const page = (req.params.pageNumber) || 1
     const skip = limit * (page - 1)
 
