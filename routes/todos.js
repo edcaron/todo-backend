@@ -1,32 +1,17 @@
 import express from 'express'
-import Todo from '../models/todo.model'
+import TodoService from '../service/todos.service'
 
-const router = express.Router();
+const router = express.Router()
+
+const todoServiceInstance = new TodoService()
 
 router.route('/:pageNumber?').get( async (req, res) => {
   try {
-    const limit = 10	
-    const page = (req.params.pageNumber) || 1
-    const skip = limit * (page - 1)
+    const params = req.params
 
-    const data = await Todo.find()
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .catch(err => res.status(400).json('Error: ' + err))
-    
-    
-    const count = await Todo.count()
-      .sort({ createdAt: -1 })
-      .skip(skip + limit)
-      .limit(limit)
+    const result = await todoServiceInstance.getTodos(params)
 
-    const hasMore = (count > 0) || false
-
-    res.json({
-      "data": data,
-      "hasMore": hasMore
-    })    
+    return res.json(result)
   } catch (error) {
     res.status(400).json('Error: ' + error)
   }
@@ -34,16 +19,11 @@ router.route('/:pageNumber?').get( async (req, res) => {
 
 router.route('/add').post(async (req, res) => {
   try {
-    const task = req.body.task
-    const completed = req.body.completed
+    const body = req.body
 
-    let newTodo = new Todo({
-      task,
-      completed
-    })
+    const result = await todoServiceInstance.addTodo(body)
 
-    await newTodo.save()
-    res.json(newTodo) 
+    return res.json(result)
   } catch (error) {
     res.status(400).json('Error: ' + error)
   }
@@ -51,27 +31,25 @@ router.route('/add').post(async (req, res) => {
 
 router.route('/:id').delete(async (req, res) => {
   try {
-    await Todo.findByIdAndDelete(req.params.id)
+    const params = req.params    
 
-    res.json('Todo deleted.')
+    await todoServiceInstance.deleteTodoById(params)
+
+    return res.json(true)
   } catch (error) {
     res.status(400).json('Error: ' + error)
   }
 })
 
 router.route('/update/:id').post(async (req, res) => {
-  try{
-      let todo = await Todo.findById(req.body._id)
+  try {
+    const body = req.body
 
-      todo.task = req.body.task
-      todo.completed = req.body.completed
+    await todoServiceInstance.updateTodo(body)
 
-      await todo.save()
-
-      res.json('updated')
-
-    } catch (error) {
-      res.status(400).json('Error: ' + error)
+    return res.json(true)
+  } catch (error) {
+    res.status(400).json('Error: ' + error)
   }
 })
 
